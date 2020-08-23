@@ -1,0 +1,47 @@
+ --Functions:
+                                                   ^
+postgres=# create function calculations(IN x int, IN y int, OUT sum int, OUT sub int, OUT mul BIGINT, OUT div float)
+postgres-# as $$
+postgres$# begin
+postgres$# sum = x+y;
+postgres$# sub = x-y;
+postgres$# mul = x*y;
+postgres$# div = X/y;
+postgres$# end;
+postgres$# $$ language  plpgsql;
+CREATE FUNCTION
+postgres=# select * from calculations(3,3);
+ sum | sub | mul | div
+-----+-----+-----+-----
+   6 |   0 |   9 |   1
+(1 row)
+
+--count(*) function:
+
+postgres=# create or replace function totalrecords()
+postgres-# returns integer as $total$
+postgres$# declare
+postgres$# total integer;
+postgres$# begin
+postgres$# select count(*) into total from sample;
+postgres$# return total;
+postgres$# end;
+postgres$# $total$ language plpgsql;
+CREATE FUNCTION
+postgres=# select * from totalrecords();
+ totalrecords
+--------------
+            5
+(1 row)
+
+
+postgres=# select * from sample;
+ sno | sid | sname |     sd
+-----+-----+-------+------------
+   1 | 101 | aaa   | 2020-08-22
+   2 | 102 | bbb   | 2020-08-22
+   3 | 103 | ccc   | 2020-08-21
+   4 | 104 | ddd   | 2020-08-20
+   5 | 105 | eee   | 2020-08-21
+(5 rows)
+
