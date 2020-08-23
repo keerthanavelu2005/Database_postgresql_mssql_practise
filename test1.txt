@@ -64,3 +64,45 @@ CREATE PROCEDURE
 postgres=# call transfer(1,2,100);
 CALL
 
+--using commit
+
+postgres=# create procedure wow()
+postgres-# language plpgsql
+postgres-# as $$
+postgres$# begin
+postgres$# create table table_check(i int);
+postgres$# commit;
+postgres$# insert into table_check values(9);
+postgres$# commit;
+postgres$# delete from table_check;
+postgres$# rollback;
+postgres$# end $$
+postgres-# ;
+CREATE PROCEDURE
+
+postgres=# call wow();
+CALL
+
+postgres=# select * from table_check;
+ i
+---
+ 9
+(1 row)
+
+
+postgres=# drop table table_check;
+DROP TABLE
+postgres=# select * from table_check;
+ERROR:  relation "table_check" does not exist
+LINE 1: select * from table_check;
+                      ^
+postgres=# call wow();
+CALL
+postgres=# select * from table_check;
+ i
+---
+ 9
+(1 row)
+
+
+
