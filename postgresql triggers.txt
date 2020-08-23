@@ -1,0 +1,47 @@
+postgres=# create table students(
+postgres(# stdid INT generated always as identity,
+postgres(# fname varchar(20) not null,
+postgres(# lname varchar(20) not null,
+postgres(# primary key(stdid)
+postgres(# );
+CREATE TABLE
+
+postgres=# create table students_track(
+postgres(# trid INT generated always as identity,
+postgres(# stdid int not null,
+postgres(# lname varchar(20) not null,
+postgres(# changed_on timestamp(5) not null
+postgres(# );
+CREATE TABLE
+
+postgres=# create or replace function track_lname_change()
+postgres-# returns trigger
+postgres-# language plpgsql
+postgres-# as $$
+postgres$# begin
+postgres$# if new.lname<>old.lname then
+postgres$# insert into students_track(stdid, lname,changed_on)
+postgres$# values(old.stdid,old.lname,now());
+postgres$# end if;
+postgres$# return new;
+postgres$# end$$
+postgres-# ;
+CREATE FUNCTION
+
+postgres=# create trigger lname_change
+postgres-# before update
+postgres-# on students
+postgres-# for each row
+postgres-# execute procedure track_lname_change();
+CREATE TRIGGER
+
+postgres=# update students
+postgres-# set lname= 'c'
+postgres-# where stdid=2;
+UPDATE 1
+
+postgres=# select * from students_track;
+ trid | stdid | lname |        changed_on
+------+-------+-------+---------------------------
+    1 |     2 | mani  | 2020-08-24 00:11:50.12127
+(1 row)
