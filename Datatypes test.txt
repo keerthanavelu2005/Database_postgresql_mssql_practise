@@ -1,0 +1,79 @@
+---Boolean--
+
+postgres=# create table ticket_sales(
+postgres(# concert_id int not null PRIMARY KEY,
+postgres(# available boolean not null
+postgres(# )
+postgres-# ;
+CREATE TABLE
+
+postgres=# create or replace procedure tickets(concert_id integer , available boolean)
+postgres-# language plpgsql
+postgres-# as $$
+postgres$# begin
+postgres$# insert into ticket_sales(concert_id, available)
+postgres$# values (concert_id , available);
+postgres$# end $$
+postgres-# ;
+CREATE PROCEDURE
+postgres=# call tickets(1, 'yes');
+CALL
+postgres=# select * from ticket_sales;
+ concert_id | available
+------------+-----------
+          1 | t
+(1 row)
+
+--character datatypes--
+
+postgres=# create table character_datatypes(
+postgres(# id serial primary key,
+postgres(# name char(10),
+postgres(# destination varchar(20),
+postgres(# message text
+postgres(# );
+CREATE TABLE
+
+postgres=# insert into character_datatypes(name, destination,message)
+postgres-# values('DD', 'software engineer', 'hii hello how are u? how was your day?');
+INSERT 0 1
+
+postgres=# select * from character_datatypes;
+ id |    name    |    destination    |                message
+----+------------+-------------------+----------------------------------------
+  1 | DD         | software engineer | hii hello how are u? how was your day?
+(1 row)
+
+postgres=# call char_test('keerthanavelu', 'teacher and freelancer and network engineer', 'hii');
+ERROR:  value too long for type character(10)
+CONTEXT:  SQL statement "insert into character_datatypes(name, destination,message)
+values(name, destination, message)"
+PL/pgSQL function char_test(character,character varying,text) line 3 at SQL statement
+postgres=# call char_test('keerthana', 'teacher and freelancer and network engineer', 'hii');
+ERROR:  value too long for type character varying(20)
+CONTEXT:  SQL statement "insert into character_datatypes(name, destination,message)
+values(name, destination, message)"
+PL/pgSQL function char_test(character,character varying,text) line 3 at SQL statement
+
+--Arrays
+
+postgres=# create table employee_sal(
+postgres(# name varchar(20),
+postgres(# paybyhalf integer[],
+postgres(# schedule text[][]
+postgres(# );
+CREATE TABLE
+
+postgres=# insert into employee_sal
+postgres-# values('keer', '{1000,1100,1200,1300,1400,1500}',
+postgres(# '{{"meeting", "presentation"}, {"training", "end of speech"}}');
+INSERT 0 1
+postgres=# select * from employee_sal;
+ name |            paybyhalf            |                      schedule
+------+---------------------------------+-----------------------------------------------------
+ keer | {1000,1100,1200,1300,1400,1500} | {{meeting,presentation},{training,"end of speech"}}
+(1 row)
+
+
+
+
