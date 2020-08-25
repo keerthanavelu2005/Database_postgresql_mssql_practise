@@ -1,3 +1,3 @@
-# Postgresql_sp_test
+# Postgresql and sql assignments
 
-Practised Postgresql stored procedures. 
+Practised stored procedures, triggers, functions, datatypes. 
