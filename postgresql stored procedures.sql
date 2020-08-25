@@ -90,4 +90,114 @@ drop table table_check;
 
 call wow();
 select * from table_check;
+
+
+
+
+
+                  
+create or replace procedure test()
+language plpgsql
+as $$
+declare
+begin
+create table new1(id int);
+insert into new1 values(3);
+commit;
+create table new2(id int);
+insert into new2 values(5);
+rollback;
+end
+$$;
  
+select * from new1;
+
+
+
+create or replace function show_accounts() returns refcursor as $$
+declare
+ref refcursor;
+begin
+open ref for select accid, accname from accounts;
+return ref;
+end
+$$language plpgsql;
+
+create table student(st_id int, st_class varchar(10), commit_rule boolean, tot_marks int default 0);
+
+insert into student values(1, '3a', true,
+
+CREATE OR REPLACE PROCEDURE updStudent(IN st_id INT,IN st_class VARCHAR, IN commit_rule boolean, INOUT total_marks INT default 0)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+UPDATE student
+SET total_marks= total_marks-10
+WHERE std_id = st_id;
+        
+UPDATE student
+SET class = st_class
+WHERE std_id = st_id;
+if commit_rule then
+commit;
+else
+rollback;
+end if;
+
+select sum(total_marks) into tot_marks from student;
+        
+END;
+$$;
+
+
+
+CREATE OR REPLACE PROCEDURE call_updstudent()
+LANGUAGE plpgsql
+AS $$
+Declare
+   tot_marks INT;
+BEGIN
+        call  updStudent(3,'4B',true, tot_marks);
+        raise info 'total marks : %',tot_marks;
+END;
+$$;
+
+call call_updstudent();
+
+
+create procedure testproc(inout r refcursor)
+language plpgsql
+as $$
+begin
+r := 'cur';
+open r for values (1),(12), (16);
+end $$
+-# ;
+
+call testproc(null);
+
+
+
+CREATE OR REPLACE PROCEDURE display_message (INOUT msg TEXT)
+AS $$
+BEGIN
+RAISE NOTICE 'Procedure Parameter: %', msg ;
+END ;
+$$
+LANGUAGE plpgsql ;
+
+
+call display_message('hiii hello how are you?');
+
+
+CREATE OR REPLACE PROCEDURE datestyle_change() LANGUAGE plpgsql SET datestyle TO postgres, dmy
+AS $$
+BEGIN
+RAISE NOTICE 'Current Date is : % ', now();
+END;
+$$ ;
+
+
+call datestyle_change();
+
