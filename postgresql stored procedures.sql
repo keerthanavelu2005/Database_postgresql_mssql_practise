@@ -78,24 +78,10 @@ rollback;
 end $$
 ;
 
-
-call wow();
-
-
-select * from table_check;
- 
-
-
-drop table table_check;
-
 call wow();
 select * from table_check;
 
 
-
-
-
-                  
 create or replace procedure test()
 language plpgsql
 as $$
@@ -113,7 +99,6 @@ $$;
 select * from new1;
 
 
-
 create or replace function show_accounts() returns refcursor as $$
 declare
 ref refcursor;
@@ -123,6 +108,8 @@ return ref;
 end
 $$language plpgsql;
 
+
+
 create table student(st_id int, st_class varchar(10), commit_rule boolean, tot_marks int default 0);
 
 insert into student values(1, '3a', true,
@@ -131,11 +118,9 @@ CREATE OR REPLACE PROCEDURE updStudent(IN st_id INT,IN st_class VARCHAR, IN comm
 LANGUAGE plpgsql
 AS $$
 BEGIN
-
 UPDATE student
 SET total_marks= total_marks-10
 WHERE std_id = st_id;
-        
 UPDATE student
 SET class = st_class
 WHERE std_id = st_id;
@@ -144,9 +129,7 @@ commit;
 else
 rollback;
 end if;
-
 select sum(total_marks) into tot_marks from student;
-        
 END;
 $$;
 
@@ -156,14 +139,15 @@ CREATE OR REPLACE PROCEDURE call_updstudent()
 LANGUAGE plpgsql
 AS $$
 Declare
-   tot_marks INT;
+tot_marks INT;
 BEGIN
-        call  updStudent(3,'4B',true, tot_marks);
-        raise info 'total marks : %',tot_marks;
+call  updStudent(3,'4B',true, tot_marks);
+raise info 'total marks : %',tot_marks;
 END;
 $$;
 
 call call_updstudent();
+
 
 
 create procedure testproc(inout r refcursor)
@@ -189,6 +173,7 @@ LANGUAGE plpgsql ;
 
 
 call display_message('hiii hello how are you?');
+
 
 
 CREATE OR REPLACE PROCEDURE datestyle_change() LANGUAGE plpgsql SET datestyle TO postgres, dmy
